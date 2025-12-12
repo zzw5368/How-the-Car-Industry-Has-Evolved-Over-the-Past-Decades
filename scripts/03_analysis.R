@@ -38,23 +38,30 @@ ggsave(
   width = 8, height = 5
 )
 
-# 2) EV adoption over time ------------------------------------------
+# 2) EV adoption – Top 10 states in 2023 -----------------------------
 
-p_ev_adoption <- ev_adoption_clean %>%
-  ggplot(aes(x = year, y = ev_count)) +
-  geom_line() +
+ev_top10 <- ev_adoption_clean %>%
+  arrange(desc(ev_count)) %>%
+  slice_head(n = 10)
+
+p_ev <- ggplot(ev_top10, aes(x = reorder(state, ev_count), y = ev_count)) +
+  geom_col() +
+  coord_flip() +
   labs(
-    title = "Electric Vehicle Adoption in the U.S.",
-    x = "Year",
-    y = "Total Registered EVs"
+    title = "Top 10 U.S. States by EV Registrations (2023)",
+    x = "State",
+    y = "Number of Registered EVs"
   ) +
   theme_minimal()
 
 ggsave(
   filename = file.path(path_images, "ev_adoption_trend.png"),
-  plot = p_ev_adoption,
-  width = 8, height = 5
+  plot = p_ev,
+  width = 8,
+  height = 5
 )
+
+
 
 # 3) Fuel prices over time ------------------------------------------
 

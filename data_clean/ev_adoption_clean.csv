@@ -1,2 +1,52 @@
-year,ev_count
-NA,7110890
+year,state,ev_count
+2023,California,1256646
+2023,Florida,254878
+2023,Texas,230125
+2023,Washington,152101
+2023,New Jersey,134753
+2023,New York,131250
+2023,Illinois,99573
+2023,Georgia,92368
+2023,Colorado,90083
+2023,Arizona,89798
+2023,Virginia,84936
+2023,Massachusetts,73768
+2023,Maryland,72139
+2023,North Carolina,70164
+2023,Pennsylvania,70154
+2023,Oregon,64361
+2023,Ohio,50393
+2023,Michigan,50284
+2023,Nevada,47361
+2023,Utah,39998
+2023,Minnesota,37050
+2023,Tennessee,33221
+2023,Connecticut,31557
+2023,Missouri,26861
+2023,Indiana,26101
+2023,Hawaii,25565
+2023,Wisconsin,24943
+2023,Oklahoma,22843
+2023,South Carolina,20873
+2023,Alabama,13047
+2023,Kentucky,11617
+2023,Kansas,11271
+2023,New Mexico,10276
+2023,New Hampshire,9861
+2023,Iowa,9031
+2023,Idaho,8501
+2023,Delaware,8435
+2023,Louisiana,8150
+2023,District of Columbia,8066
+2023,Vermont,7816
+2023,Maine,7377
+2023,Arkansas,7108
+2023,Nebraska,6920
+2023,Rhode Island,6396
+2023,Montana,4608
+2023,Mississippi,3590
+2023,West Virginia,2758
+2023,Alaska,2697
+2023,South Dakota,1675
+2023,Wyoming,1139
+2023,North Dakota,959

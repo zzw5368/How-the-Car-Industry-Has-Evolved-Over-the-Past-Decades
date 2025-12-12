@@ -51,59 +51,64 @@ inflation_clean <- inflation_raw %>%
 
 
 # 3) Clean EV adoption data -----------------------------------------
-# AFDC Excel is wide format: first column = state, next columns = years
+# After importing with skip = 2, the first column should be state,
+# and one of the numeric columns should be the total EV registrations.
+
+library(stringr)
 
 ev_adoption_clean <- ev_adoption_raw %>%
-  clean_names() %>%
-  # First row contains headers; convert first row into column names
-  row_to_names(row_number = 1) %>%
-  clean_names() %>%
-  # Now we pivot year columns into long format
-  pivot_longer(
-    cols = -state,
-    names_to = "year",
-    values_to = "ev_count"
-  ) %>%
+  janitor::clean_names() %>%
+  # First column is state name
+  rename(state = 1)
+
+# Find all numeric columns (these are the EV counts by whatever categories)
+numeric_cols <- names(ev_adoption_clean)[sapply(ev_adoption_clean, is.numeric)]
+
+# Use the LAST numeric column as the total EV registrations
+total_col <- numeric_cols[length(numeric_cols)]
+
+ev_adoption_clean <- ev_adoption_clean %>%
   mutate(
-    year = as.numeric(year),
-    ev_count = as.numeric(ev_count)
+    ev_count = as.numeric(.data[[total_col]]),
+    year = 2023
   ) %>%
-  drop_na(ev_count) %>%
-  group_by(year) %>%                # summarize to national total
-  summarise(ev_count = sum(ev_count, na.rm = TRUE), .groups = "drop") %>%
-  arrange(year)
+  select(year, state, ev_count) %>%
+  # Drop totals / blanks / NA rows
+  filter(
+    !is.na(ev_count),
+    state != "",
+    !str_detect(state, "total|Total")
+  ) %>%
+  arrange(desc(ev_count))
+
+
 
 
 # 4) Clean fuel prices ----------------------------------------------
-# The EIA Excel usually has date in the first column and prices in the second.
-# We make this robust by:
-# - cleaning names
-# - renaming col 1 -> date, col 2 -> fuel_price
-# - parsing date with lubridate::ymd()
-# - dropping rows with invalid dates/prices
+# After reading sheet = "Data 1", the first column is dates,
+# and there are several numeric columns for different fuel products.
+# We'll:
+#   - make names clean
+#   - treat column 1 as date
+#   - use the *first numeric column* as our main fuel price series.
 
 fuel_prices_clean <- fuel_prices_raw %>%
   clean_names()
 
-# Check the column names once in the console (optional):
-print(names(fuel_prices_clean))
+# Find the first numeric column (one of the price series)
+price_cols <- names(fuel_prices_clean)[sapply(fuel_prices_clean, is.numeric)]
 
 fuel_prices_clean <- fuel_prices_clean %>%
-  # first column is the date, second is the price series
-  rename(
-    date = 1,
-    fuel_price = 2
-  ) %>%
+  rename(date = 1) %>%              # first column is dates
   mutate(
-    # try to parse many common date formats
-    date = lubridate::ymd(date),
-    fuel_price = as.numeric(fuel_price),
+    date = as.Date(date),
+    fuel_price = as.numeric(.data[[price_cols[1]]]),
     year = lubridate::year(date)
   ) %>%
-  # keep only rows where we successfully parsed both
   drop_na(date, fuel_price) %>%
   select(year, date, fuel_price) %>%
   arrange(date)
+
 
 
 # 5) Join vehicle CPI with overall CPI -------------------------------
