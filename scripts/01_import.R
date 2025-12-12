@@ -1,48 +1,60 @@
 # 01_import.R
 # Purpose: Import raw datasets for car prices, EV adoption, fuel prices, and inflation.
-# All raw data should live in the `data_raw/` folder.
-
-# Load packages -----------------------------------------------------------
+# Raw data files live in the `data_raw/` folder.
 
 library(tidyverse)
 library(readr)
 library(readxl)
 
+# paths -------------------------------------------------------------
 
-# Set paths ---------------------------------------------------------------
-
-# NOTE: When using this in an RStudio project, your working directory
-# should be the project root (where the .Rproj file lives).
 path_raw   <- "data_raw"
 path_clean <- "data_clean"
 
-# Create data_clean folder if it doesn't exist yet
 if (!dir.exists(path_clean)) {
   dir.create(path_clean)
 }
 
-# Import datasets ---------------------------------------------------------
+# 1) CPI for new vehicles (FRED series CUUR0000SETA01)  -------------
 
-cpi_vehicles_raw <- read_csv("data_raw/cpi_new_vehicles.csv")
+cpi_vehicles_raw <- read_csv(
+  file.path(path_raw, "cpi_new_vehicles.csv"),
+  show_col_types = FALSE
+)
 
-fuel_prices_raw <- read_excel("data_raw/PET_PRI_GND_DCUS_NUS_W.xls", skip = 2)
+# 2) Overall CPI (FRED series CPIAUCSL) -----------------------------
 
-# Example: EV registrations / adoption data
-ev_adoption_raw <- read_csv(file.path(path_raw, "ev_adoption.csv"))
+inflation_raw <- read_csv(
+  file.path(path_raw, "cpi_overall.csv"),
+  show_col_types = FALSE
+)
 
-# Example: general inflation / CPI
-inflation_raw <- read_csv(file.path(path_raw, "cpi_all_items.csv"))
+# 3) EV adoption data (AFDC Excel) ---------------------------------
 
-# Quick structure checks --------------------------------------------------
+ev_adoption_raw <- read_excel(
+  path = file.path(path_raw, "ev_adoption.xlsx")
+)
+
+# 4) Fuel price data (EIA Excel) -----------------------------------
+
+# `skip = 2` skips the top metadata rows that EIA includes.
+fuel_prices_raw <- read_excel(
+  path = file.path(path_raw, "fuel_price.xls"),
+  skip = 2
+)
+
+# Quick checks ------------------------------------------------------
 
 glimpse(cpi_vehicles_raw)
-glimpse(fuel_prices_raw)
-glimpse(ev_adoption_raw)
 glimpse(inflation_raw)
+glimpse(ev_adoption_raw)
+glimpse(fuel_prices_raw)
 
-# Save raw objects ---------------------------------------------
+# Save raw versions as RDS (so cleaning script can load them) -------
 
 saveRDS(cpi_vehicles_raw, file.path(path_clean, "cpi_vehicles_raw.rds"))
-saveRDS(fuel_prices_raw,  file.path(path_clean, "fuel_prices_raw.rds"))
+saveRDS(inflation_raw,    file.path(path_clean, "inflation_raw.rds"))
 saveRDS(ev_adoption_raw,  file.path(path_clean, "ev_adoption_raw.rds"))
+saveRDS(fuel_prices_raw,  file.path(path_clean, "fuel_prices_raw.rds"))
+"))
 saveRDS(inflation_raw,    file.path(path_clean, "inflation_raw.rds"))
