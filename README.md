@@ -55,7 +55,7 @@ Acknowledgements
 
 This project is being developed in several structured phases:
 
-###Phase 1 — Data Collection
+### Phase 1 — Data Collection
 
 - Acquire multi-decade datasets for vehicle prices, EV adoption, fuel costs, and inflation.
 
