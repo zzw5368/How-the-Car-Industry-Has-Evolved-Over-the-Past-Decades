@@ -22,13 +22,10 @@ if (!dir.exists(path_clean)) {
 }
 
 # Import datasets ---------------------------------------------------------
-# TODO: Replace these file names with the actual ones you download.
 
-# Example: vehicle price index / CPI for new vehicles
-cpi_vehicles_raw <- read_csv(file.path(path_raw, "cpi_new_vehicles.csv"))
+cpi_vehicles_raw <- read_csv("data_raw/cpi_new_vehicles.csv")
 
-# Example: fuel prices over time
-fuel_prices_raw <- read_csv(file.path(path_raw, "fuel_prices.csv"))
+fuel_prices_raw <- read_excel("data_raw/PET_PRI_GND_DCUS_NUS_W.xls", skip = 2)
 
 # Example: EV registrations / adoption data
 ev_adoption_raw <- read_csv(file.path(path_raw, "ev_adoption.csv"))
