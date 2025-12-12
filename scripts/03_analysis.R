@@ -1,6 +1,6 @@
 # 03_analysis.R
 # Purpose: Use cleaned datasets to create plots and summary statistics.
-# Save figures into `images/` for use in the README and presentation.
+# Figures are saved into `images/`.
 
 library(tidyverse)
 library(lubridate)
@@ -12,14 +12,15 @@ if (!dir.exists(path_images)) {
   dir.create(path_images)
 }
 
-# Load cleaned data -------------------------------------------------------
+# Load cleaned data -------------------------------------------------
 
 cpi_vehicles_clean    <- readRDS(file.path(path_clean, "cpi_vehicles_clean.rds"))
-fuel_prices_clean     <- readRDS(file.path(path_clean, "fuel_prices_clean.rds"))
+inflation_clean       <- readRDS(file.path(path_clean, "inflation_clean.rds"))
 ev_adoption_clean     <- readRDS(file.path(path_clean, "ev_adoption_clean.rds"))
+fuel_prices_clean     <- readRDS(file.path(path_clean, "fuel_prices_clean.rds"))
 vehicle_prices_joined <- readRDS(file.path(path_clean, "vehicle_prices_joined.rds"))
 
-# 1) Trend: CPI for new vehicles over time --------------------------------
+# 1) CPI for new vehicles -------------------------------------------
 
 p_vehicle_cpi <- cpi_vehicles_clean %>%
   ggplot(aes(x = year, y = cpi_new_vehicles)) +
@@ -27,7 +28,7 @@ p_vehicle_cpi <- cpi_vehicles_clean %>%
   labs(
     title = "CPI for New Vehicles Over Time",
     x = "Year",
-    y = "CPI (New Vehicles)"
+    y = "CPI (New Vehicles Index)"
   ) +
   theme_minimal()
 
@@ -37,15 +38,15 @@ ggsave(
   width = 8, height = 5
 )
 
-# 2) Trend: EV adoption over time -----------------------------------------
+# 2) EV adoption over time ------------------------------------------
 
 p_ev_adoption <- ev_adoption_clean %>%
   ggplot(aes(x = year, y = ev_count)) +
   geom_line() +
   labs(
-    title = "Electric Vehicle Adoption Over Time",
+    title = "Electric Vehicle Adoption in the U.S.",
     x = "Year",
-    y = "Number of EVs (or registrations)"
+    y = "Total Registered EVs"
   ) +
   theme_minimal()
 
@@ -55,15 +56,15 @@ ggsave(
   width = 8, height = 5
 )
 
-# 3) Trend: Fuel prices over time -----------------------------------------
+# 3) Fuel prices over time ------------------------------------------
 
 p_fuel_prices <- fuel_prices_clean %>%
   ggplot(aes(x = date, y = fuel_price)) +
   geom_line() +
   labs(
-    title = "Fuel Prices Over Time",
+    title = "U.S. Fuel Prices Over Time",
     x = "Year",
-    y = "Fuel Price (per gallon)"
+    y = "Dollars per Gallon"
   ) +
   theme_minimal()
 
@@ -73,14 +74,14 @@ ggsave(
   width = 8, height = 5
 )
 
-# 4) Simple summary table example -----------------------------------------
+# 4) Simple summary table -------------------------------------------
 
 vehicle_summary <- vehicle_prices_joined %>%
   group_by(year) %>%
   summarise(
     avg_cpi_vehicles = mean(cpi_new_vehicles, na.rm = TRUE),
-    avg_cpi_overall  = mean(cpi_all_items, na.rm = TRUE)
+    avg_cpi_overall  = mean(cpi_all_items,    na.rm = TRUE),
+    .groups = "drop"
   )
 
 print(vehicle_summary)
-
